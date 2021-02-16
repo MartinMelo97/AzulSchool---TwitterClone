@@ -1,0 +1,6 @@
+<form action="{% url 'users:follow' %}" method="POST" style='display:inline'>
+    {% csrf_token %}
+    <input type="hidden" name="follower" value={{request.user.id}}>
+    <input type="hidden" name="followed" value={{user.id}}>
+    <input type="submit" value="SEGUIR">
+</form>

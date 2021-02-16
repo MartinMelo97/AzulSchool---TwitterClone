@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Usuarios registrados</h1>
+    <ul>
+    {% for user in users %}
+        <li>@{{user.username}} -
+            {% if user.is_following %}
+                {% include 'common/unfollow_user.html' %}
+            {% else %}
+                {% include 'common/follow_user.html' %}
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock content %}
