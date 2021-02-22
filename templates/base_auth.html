@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block app %}
+
+<ul>
+    <a href="{% url 'register' %}"><li>Regisrarse</li></a>
+    <a href="{% url 'login' %}"><li>Iniciar sesión</li></a>
+</ul>
+
+{% block content %}
+{% endblock content %}
+
+{% endblock app %}

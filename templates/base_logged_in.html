@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load user_follow_stats %}
+
+{% block app %}
+
+<ul>
+    {% comment %} <a href="{% url 'profile' %}"><li>Cerrar sesión</li></a> {% endcomment %}
+    <a href="{% url 'logout' %}"><li>Cerrar sesión</li></a>
+</ul>
+
+<p>SIGUIENDO: {% user_following_stat request.user.id %}</p>
+<p>SEGUIDORES: {% user_followers_stat request.user.id %}</p>
+
+{% block content %}
+{% endblock content %}
+
+{% endblock app %}

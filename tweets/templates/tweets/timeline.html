@@ -1,0 +1,13 @@
+{% extends 'base_logged_in.html' %}
+
+{% block content %}
+    {% for tweet in  tweets %}
+        <div>
+            <h2>@{{ tweet.user.username }}</h2>
+            <p>{{ tweet.body }}</p>
+            <span>Likes: {{ tweet.likes_count }}</span>
+            <span>Retweets: {{ tweet.retweets_count }}</span>
+            <span>Responses: {{ tweet.responses_count }}</span>
+        </div>
+    {% endfor %}
+{% endblock content %}

@@ -17,11 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from accounts import urls as accounts_urls
 from accounts.views import RegisterUser, LoginUser, LogoutUser
+from tweets import urls as tweets_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', LogoutUser, name='logout'),
-    path('users/', include(accounts_urls, namespace='users'))
+    path('users/', include(accounts_urls, namespace='users')),
+    path('app/', include(tweets_urls, namespace='app'))
 ]
