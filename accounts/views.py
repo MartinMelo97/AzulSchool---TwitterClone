@@ -47,7 +47,7 @@ class LoginUser(views.View):
                 if user:
                     login(request, user)
                     messages.success(request, 'Inicio de sesión correcto')
-                    return redirect('/')
+                    return redirect('/users/')
                 else:
                     messages.error(request, 'Credenciales inválidas')
                     template_name = 'accounts/login.html'
@@ -74,13 +74,13 @@ class LoginUser(views.View):
 def LogoutUser(request):
     logout(request)
     messages.success(request, 'Sesión cerrada con éxito')
-    return redirect('/login')
+    return redirect('/login/')
 
 
 # USERS VIEWS
 @login_required
 def UserList(request):
-    users = TwitterUser.objects.exclude(id=request.user.id)
+    users = TwitterUser.objects.exclude(id=request.user.id).exclude(is_superuser=True)
     for user in users:
         is_following = Follow.objects.filter(follower=request.user, followed=user).exists()
         user.is_following = is_following
@@ -97,10 +97,10 @@ def FollowUser(request):
     followed = TwitterUser.objects.get(id=followed_id)
     new_follow = Follow.objects.create(follower=follower, followed=followed)
     if new_follow:
-        return redirect('/users')
+        return redirect('/users/')
     else:
         messages.error(request, 'Algo falló al intentar seguir a ese usuario')
-        return redirect('/users')
+        return redirect('/users/')
 
 def UnfollowUser(request):
     follower_id = request.POST['follower']
@@ -110,7 +110,7 @@ def UnfollowUser(request):
     follow = Follow.objects.get(follower=follower, followed=followed)
     removed_follow = follow.delete()
     if removed_follow:
-        return redirect('/users')
+        return redirect('/users/')
     else:
         messages.error(request, 'Algo falló al intentar dejar de seguir a ese usuario')
-        return redirect('/users')
+        return redirect('/users/')
