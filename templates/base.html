@@ -14,8 +14,10 @@
         <a href="{% url 'login' %}"><button>Iniciar sesión</button></a>
     {% endif %}
 
-    <p>SIGUIENDO: {% user_following_stat request.user.id %}</p>
-    <p>SEGUIDORES: {% user_followers_stat request.user.id %}</p>
+    {% if request.user.is_authenticated  %}
+        <p>SIGUIENDO: {% user_following_stat request.user.id %}</p>
+        <p>SEGUIDORES: {% user_followers_stat request.user.id %}</p>
+    {% endif %}
 
     {% block content %}
     {% endblock content %}
