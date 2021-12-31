@@ -1,15 +1,18 @@
-from django.shortcuts import render
 from django import views
-from .models import Tweet
+from django.contrib import messages
+from django.db.models import Count, Q
+from django.shortcuts import render, redirect
 from accounts.models import TwitterUser, Follow
-from django.db.models import Count
+from tweets.forms import CreateTweetForm
+from .models import Tweet
+
 
 def GetTimeline(request):
     TWEETS_PER_PAGE = 10
     page_number = request.GET['page'] if 'page' in request.GET else 1
     offset = (page_number - 1) * TWEETS_PER_PAGE
     limit = page_number * TWEETS_PER_PAGE
-    following_users = TwitterUser.objects.filter(followers__in=Follow.objects.filter(follower=request.user))
+    following_users = TwitterUser.objects.filter(Q(followers__in=Follow.objects.filter(follower=request.user)) | Q(id=request.user.id))
     likes_counter = Count('likes', distinct=True)
     retweets_counter = Count('retweets', distinct=True)
     responses_counter = Count('responses', distinct=True)
@@ -21,8 +24,29 @@ def GetTimeline(request):
             responses_count=responses_counter
         )\
         .order_by('-created_at')[offset:limit]
+    create_tweet_form = CreateTweetForm()
     template_name = 'tweets/timeline.html'
     context = {
-        'tweets': tweets
+        'tweets': tweets,
+        'create_tweet_form': create_tweet_form
     }
     return render(request, template_name, context)
+
+class CreateTweet(views.View):
+    def post(self, request):
+        tweet_form = CreateTweetForm(data=request.POST)
+        if tweet_form.is_valid():
+            try:
+                user = TwitterUser.objects.get(id=request.user.id)
+                Tweet.objects.create(
+                    user=user,
+                    body=tweet_form.cleaned_data['body']
+                )
+                return redirect('/app/')
+            except Exception as e:
+                print(e)
+                messages.error(request, 'No se pudo crear el tweet')
+                return redirect('/app/')
+        else:
+            messages.error(request, 'Bad request')
+            return redirect('/app/')
