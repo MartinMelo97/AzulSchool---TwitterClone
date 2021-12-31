@@ -8,8 +8,13 @@
 </head>
 <body>
 
-    {% block app %}
-    {% endblock app %}
+    {% if request.user.is_authenticated  %}
+        <p>SIGUIENDO: {% user_following_stat request.user.id %}</p>
+        <p>SEGUIDORES: {% user_followers_stat request.user.id %}</p>
+    {% endif %}
+
+    {% block content %}
+    {% endblock content %}
 
     {% for message in messages %}
         {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
