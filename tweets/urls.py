@@ -1,7 +1,8 @@
-from django.urls import path, include
-from .views import GetTimeline
+from django.urls import path
+from .views import GetTimeline, CreateTweet
 
 app_name='app'
 urlpatterns = [
-    path('home/', GetTimeline, name='home')
+    path('', GetTimeline, name='home'),
+    path('create/', CreateTweet.as_view(), name='create')
 ]
