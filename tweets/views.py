@@ -4,7 +4,7 @@ from django.db.models import Count, Q
 from django.shortcuts import render, redirect
 from accounts.models import TwitterUser, Follow
 from tweets.forms import CreateTweetForm
-from .models import Tweet
+from .models import Like, Tweet
 
 
 def GetTimeline(request):
@@ -28,7 +28,7 @@ def GetTimeline(request):
     template_name = 'tweets/timeline.html'
     context = {
         'tweets': tweets,
-        'create_tweet_form': create_tweet_form
+        'create_tweet_form': create_tweet_form,
     }
     return render(request, template_name, context)
 
@@ -50,3 +50,33 @@ class CreateTweet(views.View):
         else:
             messages.error(request, 'Bad request')
             return redirect('/app/')
+
+class ToggleLikeTweet(views.View):
+    def post(self, request):
+        try:
+            tweet = Tweet.objects.get(id=request.POST['tweet_id'])
+
+            liked_tweet = Like.objects.filter(user=request.user, liked_tweet=tweet)
+
+            if len(liked_tweet) == 0:
+                Like.objects.create(
+                    user = request.user,
+                    liked_tweet = tweet
+                )
+            else:
+                liked_tweet.delete()
+            return redirect('/app/')
+        except Exception as e:
+            print(e)
+            messages.error(request, 'No se puede dar like al tweet')
+            return redirect('/app/')
+
+# class RetweetTweet(views.View):
+#     def post(self, request):
+#         try:
+#             tweet = Tweet.objects.get(id=request.POST['tweet_id'])
+#             print(request.POST['quote'] == None)
+#         except Exception as e:
+#             print(e)
+#             messages.error(request, 'No se pudo realizar el retweet')
+#             return redirect('/app/')

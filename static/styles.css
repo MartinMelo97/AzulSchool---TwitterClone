@@ -1,0 +1,4 @@
+span.tweet_action:hover {
+    color: blue;
+    text-decoration: underline;
+}

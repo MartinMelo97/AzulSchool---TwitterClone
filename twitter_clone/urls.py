@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from accounts import urls as accounts_urls
 from accounts.views import RegisterUser, LoginUser, LogoutUser
 from tweets import urls as tweets_urls
@@ -26,4 +28,4 @@ urlpatterns = [
     path('logout/', LogoutUser, name='logout'),
     path('users/', include(accounts_urls, namespace='users')),
     path('app/', include(tweets_urls, namespace='app'))
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

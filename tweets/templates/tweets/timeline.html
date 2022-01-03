@@ -6,9 +6,60 @@
         <div>
             <h2>@{{ tweet.user.username }}</h2>
             <p>{{ tweet.body }}</p>
-            <span>Likes: {{ tweet.likes_count }}</span>
-            <span>Retweets: {{ tweet.retweets_count }}</span>
-            <span>Responses: {{ tweet.responses_count }}</span>
+            <span id="like-span-{{ tweet.id }}" class="tweet_action like-span">Likes: {{ tweet.likes_count }}</span>
+            <span id="retweet-span-{{ tweet.id }}" class="tweet_action retweet-span">Retweets: {{ tweet.retweets_count }}</span>
+            <span id="reply-span-{{ tweet.id }}" class="tweet_action reply-span">Responses: {{ tweet.responses_count }}</span>
+            <form id="like-form-{{ tweet.id }}" action="{% url 'app:like_tweet' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name='tweet_id' value={{ tweet.id }}>
+            </form>
+            <form id="retweet-form-{{ tweet.id }}" action="{% url 'app:retweet_tweet' %}" method="POST" style="display:none">
+                {% csrf_token %}
+                <label for="quote-retweet-input">Cita del retweet</label>
+                <input name="quote" id="quote-retweet-input">
+                <input type="hidden" name='tweet_id' value={{ tweet.id }}>
+                <input type="submit" value="Twittear">
+            </form>
+            <form id="reply-form-{{ tweet.id }}" action="{% url 'app:create' %}" method="POST" style="display:none">
+                {% csrf_token %}
+                <input name="quote">
+                <input type="hidden" name='tweet_id' value={{ tweet.id }}>
+                <input type="hidden" name='tweet_id' value={{ tweet.id }}>
+            </form>
         </div>
     {% endfor %}
 {% endblock content %}
+
+{% block scripts %}
+<script>
+
+    const getTweetId = (node) => node.id[node.id.length - 1];
+
+    const isNodeDisplayed = (node) => node.style.display !== 'none';
+
+    const likeSpansRef = document.querySelectorAll('.like-span');
+    likeSpansRef.forEach(likeSpan => {
+        likeSpan.addEventListener('click', () => {
+            document.querySelector(`#like-form-${getTweetId(likeSpan)}`).submit()
+
+        });
+    });
+
+    const retweetSpansRef = document.querySelectorAll('.retweet-span');
+    retweetSpansRef.forEach(retweetSpan => {
+        retweetSpan.addEventListener('click', () => {
+            const retweetForm = document.querySelector(`#retweet-form-${getTweetId(retweetSpan)}`);
+            retweetForm.style.display = isNodeDisplayed(retweetForm) ? 'none' : 'block';
+        });
+    });
+
+    const replySpansRef = document.querySelectorAll('.reply-span');
+    replySpansRef.forEach(replySpan => {
+        replySpan.addEventListener('click', () => {
+            const replyForm = document.querySelector(`#reply-form-${getTweetId(replySpan)}`);
+            replyForm.style.display = isNodeDisplayed(replyForm) ? 'none' : 'block';
+        });
+    });
+
+</script>
+{% endblock scripts %}
